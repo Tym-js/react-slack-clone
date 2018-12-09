@@ -17,8 +17,10 @@ class Register extends React.Component {
     email: "",
     password: "",
     passwordConfirmation: "",
-    errors: []
+    errors: [],
+    loading: false
   }
+
   isFormEmpty = ({ username, email, password, passwordConfirmation }) => {
     return (
       !username.length ||
@@ -27,6 +29,7 @@ class Register extends React.Component {
       !passwordConfirmation.length
     )
   }
+
   isPasswordValid = ({ password, passwordConfirmation }) => {
     if (password.length < 6 || passwordConfirmation.length < 6) {
       return false
@@ -36,6 +39,7 @@ class Register extends React.Component {
       return true
     }
   }
+
   isFormValid = () => {
     let errors = []
     let error
@@ -51,32 +55,47 @@ class Register extends React.Component {
       return true
     }
   }
-  displayErrors = errors =>
-    errors.map((error, i) => <p key={i}>{error.message}</p>)
-  handleChange = event => {
-    this.setState({ [event.target.name]: event.target.value })
-  }
+
   handleSubmit = event => {
     if (this.isFormValid()) {
+      this.setState({ errors: [], loading: true })
       event.preventDefault()
       firebase
         .auth()
         .createUserWithEmailAndPassword(this.state.email, this.state.password)
         .then(createdUser => {
           console.log(createdUser)
+          this.setState({ loading: false })
         })
         .catch(err => {
           console.log(err)
+          this.setState({
+            errors: this.state.errors.concat(err),
+            loading: false
+          })
         })
     }
   }
+
+  displayErrors = errors =>
+    errors.map((error, i) => <p key={i}>{error.message}</p>)
+  handleInputError = (errors, inputName) => {
+    return errors.some(error => error.message.toLowerCase().includes(inputName))
+      ? "error"
+      : ""
+  }
+  handleChange = event => {
+    this.setState({ [event.target.name]: event.target.value })
+  }
+
   render() {
     const {
       username,
       email,
       password,
       passwordConfirmation,
-      errors
+      errors,
+      loading
     } = this.state
     return (
       <Grid textAlign="center" verticalAlign="middle" className="app">
@@ -106,6 +125,7 @@ class Register extends React.Component {
                 placeholder="Email Address"
                 value={email}
                 onChange={this.handleChange}
+                className={this.handleInputError(errors, "email")}
                 type="email"
               />
 
@@ -117,6 +137,7 @@ class Register extends React.Component {
                 placeholder="Password"
                 value={password}
                 onChange={this.handleChange}
+                className={this.handleInputError(errors, "password")}
                 type="password"
               />
 
@@ -128,10 +149,17 @@ class Register extends React.Component {
                 placeholder="Password Confirmation"
                 value={passwordConfirmation}
                 onChange={this.handleChange}
+                className={this.handleInputError(errors, "password")}
                 type="password"
               />
 
-              <Button color="orange" fluid size="large">
+              <Button
+                disable={loading}
+                className={loading ? "loading" : ""}
+                color="orange"
+                fluid
+                size="large"
+              >
                 Submit
               </Button>
             </Segment>
