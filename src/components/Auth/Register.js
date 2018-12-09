@@ -1,5 +1,6 @@
 import React from "react"
 import firebase from "../../firebase"
+import md5 from "md5"
 import {
   Grid,
   Form,
@@ -18,7 +19,8 @@ class Register extends React.Component {
     password: "",
     passwordConfirmation: "",
     errors: [],
-    loading: false
+    loading: false,
+    usersRef: firebase.database().ref("users")
   }
 
   isFormEmpty = ({ username, email, password, passwordConfirmation }) => {
@@ -65,7 +67,25 @@ class Register extends React.Component {
         .createUserWithEmailAndPassword(this.state.email, this.state.password)
         .then(createdUser => {
           console.log(createdUser)
-          this.setState({ loading: false })
+          createdUser.user
+            .updateProfile({
+              displayName: this.state.username,
+              photoURL: `http://gravatar.com/avatar/${md5(
+                createdUser.user.email
+              )}?d=identicon`
+            })
+            .then(() => {
+              this.saveUser(createdUser).then(() => {
+                console.log("user saved")
+              })
+            })
+            .catch(err => {
+              console.log(err)
+              this.setState({
+                errors: this.state.errors.concat(err),
+                loading: false
+              })
+            })
         })
         .catch(err => {
           console.log(err)
@@ -76,7 +96,12 @@ class Register extends React.Component {
         })
     }
   }
-
+  saveUser = createdUser => {
+    return this.state.usersRef.child(createdUser.user.uid).set({
+      name: createdUser.user.displayName,
+      avatar: createdUser.user.photoURL
+    })
+  }
   displayErrors = errors =>
     errors.map((error, i) => <p key={i}>{error.message}</p>)
   handleInputError = (errors, inputName) => {
