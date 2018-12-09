@@ -11,9 +11,11 @@
     "react": "16.5.2",
     "react-dom": "16.5.2",
     "react-fontawesome": "1.6.1",
+    "react-redux": "latest",
     "react-router-dom": "latest",
     "react-scripts": "2.0.3",
     "redux": "latest",
+    "redux-devtools-extension": "2.13.7",
     "semantic-ui-css": "2.4.1",
     "semantic-ui-react": "0.83.0"
   },
