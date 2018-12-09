@@ -6,6 +6,7 @@
   "main": "src/index.js",
   "dependencies": {
     "firebase": "latest",
+    "history": "latest",
     "md5": "latest",
     "react": "16.5.2",
     "react-dom": "16.5.2",
