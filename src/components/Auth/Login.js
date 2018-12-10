@@ -87,7 +87,7 @@ class Login extends React.Component {
               />
 
               <Button
-                disable={loading}
+                disabled={loading}
                 className={loading ? "loading" : ""}
                 color="violet"
                 fluid
