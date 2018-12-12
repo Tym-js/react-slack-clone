@@ -11,7 +11,7 @@ import {
   withRouter
 } from "react-router-dom";
 import rootReducer from "./reducers/index";
-import { setUser } from "./actions/index";
+import { setUser, clearUser } from "./actions/index";
 
 import { createStore } from "redux";
 import { Provider, connect } from "react-redux";
@@ -30,6 +30,9 @@ class Root extends React.Component {
       if (user) {
         this.props.setUser(user);
         this.props.history.push("/");
+      } else {
+        this.props.clearUser();
+        this.props.history.push("/login");
       }
     });
   }
@@ -52,7 +55,7 @@ const mapStateToProps = state => ({
 const RootwithAuth = withRouter(
   connect(
     mapStateToProps,
-    { setUser }
+    { setUser, clearUser }
   )(Root)
 );
 
