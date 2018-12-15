@@ -12,6 +12,10 @@ class Channels extends React.Component {
     modal: false
   }
 
+  componentDidMount = () => {
+    this.addListeners()
+  }
+
   handleSubmit = event => {
     event.preventDefault()
     if (this.isFormValid(this.state)) {
@@ -20,6 +24,7 @@ class Channels extends React.Component {
   }
 
   isFormValid = ({ channelName, channelDetail }) => channelName && channelDetail
+
   addChannel = () => {
     const { channelsRef, channelName, channelDetail, user } = this.state
     const key = channelsRef.push().key
@@ -50,17 +55,41 @@ class Channels extends React.Component {
       })
   }
 
+  addListeners = () => {
+    let loadedChannels = []
+    const { channelsRef } = this.state
+    channelsRef.on("child_added", snap => {
+      loadedChannels.push(snap.val())
+      this.setState({ channels: loadedChannels })
+    })
+  }
+
   handleChange = event => {
     this.setState({
       [event.target.name]: event.target.value
     })
   }
+
+  displayChannels = channels =>
+    channels.length > 0 &&
+    channels.map(channel => (
+      <Menu.Item
+        key={channel.id}
+        onClick={() => console.log(channel)}
+        name={channel.name}
+        style={{ opacity: 0.7 }}
+      >
+        # {channel.name}
+      </Menu.Item>
+    ))
+
   closeModal = () => this.setState({ modal: false })
 
   openModal = () => this.setState({ modal: true })
 
   render() {
     const { channels, modal } = this.state
+
     return (
       <React.Fragment>
         <Menu.Menu style={{ paddingBottom: "2em" }}>
@@ -71,6 +100,7 @@ class Channels extends React.Component {
             {""}({channels.length})
             <Icon name="add" onClick={this.openModal} />
           </Menu.Item>
+          {this.displayChannels(channels)}
         </Menu.Menu>
 
         <Modal basic open={modal} onClose={this.closeModal}>
