@@ -2,13 +2,12 @@ html,
 body,
 .app {
   height: 100vh;
-  background: #eee;
+  background-color: #eee;
   padding: 1em;
 }
-
 /* Mesages.js */
 .messages {
-  height: 440px;
+  height: 75vh;
   overflow-y: scroll;
 }
 
