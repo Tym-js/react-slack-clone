@@ -16,8 +16,27 @@ class Channels extends React.Component {
     firstLoad: true
   }
 
+  /* about listeners for firebase */
   componentDidMount = () => {
     this.addListeners()
+  }
+
+  componentWillUnmount = () => {
+    this.removeListeners()
+  }
+
+  addListeners = () => {
+    let loadedChannels = []
+    const { channelsRef } = this.state
+    channelsRef.on("child_added", snap => {
+      loadedChannels.push(snap.val())
+      this.setState({ channels: loadedChannels }, () => this.setFirstChannel())
+    })
+  }
+
+  removeListeners = () => {
+    const { channelsRef } = this.state
+    channelsRef.off()
   }
 
   handleSubmit = event => {
@@ -27,6 +46,7 @@ class Channels extends React.Component {
     }
   }
 
+  /* form event */
   isFormValid = ({ channelName, channelDetail }) => channelName && channelDetail
 
   addChannel = () => {
@@ -59,23 +79,10 @@ class Channels extends React.Component {
       })
   }
 
-  addListeners = () => {
-    let loadedChannels = []
-    const { channelsRef } = this.state
-    channelsRef.on("child_added", snap => {
-      loadedChannels.push(snap.val())
-      this.setState({ channels: loadedChannels }, () => this.setFirstChannel())
-    })
-  }
+  /* view event about form */
+  closeModal = () => this.setState({ modal: false })
 
-  setFirstChannel = () => {
-    const firstChannel = this.state.channels[0]
-    if (this.state.firstLoad && this.state.channels.length > 0) {
-      this.props.setCurrentChannel(firstChannel)
-      this.setActiveChannel(firstChannel)
-    }
-    this.setState({ firstLoad: false })
-  }
+  openModal = () => this.setState({ modal: true })
 
   handleChange = event => {
     this.setState({
@@ -83,17 +90,7 @@ class Channels extends React.Component {
     })
   }
 
-  changeChannel = channel => {
-    this.setActiveChannel(channel)
-    this.props.setCurrentChannel(channel)
-  }
-
-  setActiveChannel = channel => {
-    this.setState({
-      activeChannel: channel.id
-    })
-  }
-
+  /* view event about channel */
   displayChannels = channels =>
     channels.length > 0 &&
     channels.map(channel => (
@@ -108,9 +105,25 @@ class Channels extends React.Component {
       </Menu.Item>
     ))
 
-  closeModal = () => this.setState({ modal: false })
+  setFirstChannel = () => {
+    const firstChannel = this.state.channels[0]
+    if (this.state.firstLoad && this.state.channels.length > 0) {
+      this.props.setCurrentChannel(firstChannel)
+      this.setActiveChannel(firstChannel)
+    }
+    this.setState({ firstLoad: false })
+  }
 
-  openModal = () => this.setState({ modal: true })
+  changeChannel = channel => {
+    this.setActiveChannel(channel)
+    this.props.setCurrentChannel(channel)
+  }
+
+  setActiveChannel = channel => {
+    this.setState({
+      activeChannel: channel.id
+    })
+  }
 
   render() {
     const { channels, modal } = this.state
