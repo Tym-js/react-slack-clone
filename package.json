@@ -8,6 +8,7 @@
     "firebase": "latest",
     "history": "latest",
     "md5": "latest",
+    "moment": "latest",
     "react": "16.5.2",
     "react-dom": "16.5.2",
     "react-fontawesome": "1.6.1",
