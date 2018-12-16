@@ -8,6 +8,7 @@
     "firebase": "latest",
     "history": "latest",
     "md5": "latest",
+    "mime-types": "2.1.21",
     "moment": "latest",
     "react": "16.5.2",
     "react-dom": "16.5.2",
