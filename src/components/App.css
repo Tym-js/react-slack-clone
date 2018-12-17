@@ -7,7 +7,12 @@ body,
 }
 /* Mesages.js */
 .messages {
-  height: 75vh;
+  height: 62vh;
+  overflow-y: scroll;
+}
+
+.messages__progresss {
+  height: 58vh;
   overflow-y: scroll;
 }
 
